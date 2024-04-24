@@ -60,18 +60,19 @@ namespace TikTakToe_KI
             Button btn = (Button)sender;
             if (btn.Content == "")
             {
+                int index = (int)btn.Tag;
                 if (YourTurn)
                 {
                     btn.Content = Player;
                     board[index] = 1;
-                    CheckWin();
+                    CheckWin(1);
                     YourTurn = false;
                 }
                 else
                 {
                     btn.Content = Computer;
                     board[index] = 2;
-                    CheckWin();
+                    CheckWin(2);
                     YourTurn = true;
                 }
                 
