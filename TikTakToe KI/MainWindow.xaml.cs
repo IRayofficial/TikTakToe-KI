@@ -109,7 +109,6 @@ namespace TikTakToe_KI
 
         }
 
-        //überprüfung ob jemand gewonnen hat
         private void CheckWin(int p)
         {
             //Horizontal
