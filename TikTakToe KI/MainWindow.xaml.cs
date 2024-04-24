@@ -170,7 +170,20 @@ namespace TikTakToe_KI
         //Random Funktion zum auswählen eines leeren Feldes
         private void RandomPick()
         {
+            bool flag = false;
+            while (flag == false)
+            {
+                int y = random.Next(9);
+                if (board[y] == 0)
+                {
+                    flag = true;
 
+                }
+            }
+
+            /*
+             * 
+             */
         }
 
 
