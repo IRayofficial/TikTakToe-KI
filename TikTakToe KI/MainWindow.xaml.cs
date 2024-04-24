@@ -214,9 +214,6 @@ namespace TikTakToe_KI
                 }
             }
 
-            /*
-             * 
-             */
         }
 
 
