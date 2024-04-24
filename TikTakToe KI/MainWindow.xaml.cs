@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace TikTakToe_KI
 {
@@ -125,9 +126,19 @@ namespace TikTakToe_KI
             //Vertikal
         }
 
-        private void AddScore(int Player)
+        private void AddScore(int p)
         {
-
+            if (p == 1)
+            {
+                ScoreX++;
+                XScore.Text = ScoreX.ToString();    
+                
+            }
+            else
+            {
+                ScoreO++;
+                OScore.Text = ScoreO.ToString();
+            }
         }
     }
 }
