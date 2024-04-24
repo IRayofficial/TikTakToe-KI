@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -8,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace TikTakToe_KI
 {
@@ -16,6 +18,7 @@ namespace TikTakToe_KI
     /// </summary>
     public partial class MainWindow : Window
     {
+        //Attribute
         public char Player = 'X';
         public char Computer = 'O';
         public bool YourTurn;
@@ -24,15 +27,19 @@ namespace TikTakToe_KI
         public int ScoreO = 0;
 
         public List<Button> Buttons = new List<Button>();
-        public int[] board;
+        public int[] board = new int[9];
         Random random = new Random();
         public MainWindow()
         {
             InitializeComponent();
 
+            int i = 0;
+            //Läde alle Buttons in eine Liste
             foreach (Button btn in GameGrid.Children)
             {
+                btn.Tag = i;
                 Buttons.Add(btn);
+                i++;
             }
 
             XScore.Text = ScoreX.ToString();
@@ -54,16 +61,19 @@ namespace TikTakToe_KI
             Button btn = (Button)sender;
             if (btn.Content == "")
             {
+                int index = (int)btn.Tag;
                 if (YourTurn)
                 {
                     btn.Content = Player;
-                    CheckWin();
+                    board[index] = 1;
+                    CheckWin(1);
                     YourTurn = false;
                 }
                 else
                 {
                     btn.Content = Computer;
-                    CheckWin();
+                    board[index] = 2;
+                    CheckWin(2);
                     YourTurn = true;
                 }
                 
@@ -100,14 +110,55 @@ namespace TikTakToe_KI
         }
 
         //überprüfung ob jemand gewonnen hat
-        private void CheckWin()
+        private void CheckWin(int p)
         {
-            
+            //Horizontal
+            for (int i = 0; i <9; i+=3)
+            {
+                if (board[i] == p && board[i+1] == p && board[i+2] == p)
+                {
+                    AddScore(p);
+                    NewGame();
+                    return;
+                }
+            }
+
+            //Vertikal
+            for (int i = 0;i <3;i++) 
+            {
+                if (board[i] ==p && board[i+3] ==p && board[i+6] == p)
+                {
+                    AddScore(p);
+                    NewGame();
+                    return;
+                }
+            }
+
+            //Diagonal
+
+            if ((board[0] == p && board[4] == p && board[8] == p || board[2] == p && board[4] == p && board[6] == p))
+            {
+                AddScore(p);
+                NewGame();
+                return;
+            }
+
         }
 
-        private void AddScore(string Player)
+        private void AddScore(int p)
         {
-
+            if (p == 1)
+            {
+                ScoreX++;
+                XScore.Text = ScoreX.ToString();    
+                
+            }
+            else
+            {
+                ScoreO++;
+                OScore.Text = ScoreO.ToString();
+            }
         }
+
     }
 }
