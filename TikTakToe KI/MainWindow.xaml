@@ -7,30 +7,31 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="1000" Width="1920"  MaxHeight="1080" MaxWidth="1920"
         WindowState="Maximized">
+
     <Grid Background="#F6F6F6">
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="1.2*"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="1.2*"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         
         <!--TopBar-->
-        <Grid Grid.Row="0" Grid.Column="0">
+        <Grid Grid.Row="0" Grid.Column="0" Background="Gray">
             <Border BorderBrush="Black" BorderThickness="1">
-                <TextBlock Text="X" TextAlignment="Center" Foreground="Black" FontSize="100" Background="Red"/>
+                <Image Source="assets/x.png" HorizontalAlignment="Center" VerticalAlignment="Center"  Stretch="Uniform"/>
             </Border>
         </Grid>
 
         <Grid Grid.Row="0" Grid.Column="2">
-            <Border BorderBrush="Black" BorderThickness="1">
-                <TextBlock Text="O" TextAlignment="Center" Foreground="Black" FontSize="100" Background="Blue"/>
+            <Border BorderBrush="Black" BorderThickness="1" Background="Gray">
+                <Image Source="\assets\o.png" HorizontalAlignment="Center" VerticalAlignment="Center"  Stretch="Uniform"/>
             </Border>
         </Grid>
 
@@ -49,29 +50,29 @@
             </Grid.ColumnDefinitions>
 
             <!--Score X-->
-            <Grid Grid.Row="1" Grid.Column="0">
+            <Grid Grid.Row="1" Grid.Column="0" Background="LightGray">
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" Background="LightGray" Text="Score" FontSize="30"/>
+                <TextBlock Grid.Column="0" Text="Score" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 <Border Grid.Column="1" BorderBrush="Black" BorderThickness="5">
-                    <TextBlock Background="DarkGray" x:Name="XScore" FontSize="30"/>
+                    <TextBlock Background="DarkGray" x:Name="XScore" FontSize="30" />
                 </Border>
                 
             </Grid>
 
             <!--Score O-->
-            <Grid Grid.Row="1" Grid.Column="1">
+            <Grid Grid.Row="1" Grid.Column="1" Background="LightGray">
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="1" Background="LightGray" Text="Score" FontSize="30"/>
+                <TextBlock Grid.Column="1" Background="LightGray" Text="Score" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" />
 
                 <Border Grid.Column="0" BorderBrush="Black" BorderThickness="5">
                     <TextBlock Background="DarkGray" x:Name="OScore" FontSize="30"/>
@@ -83,50 +84,65 @@
 
         <!--Optionen P1-->
         <Grid Grid.Row="1" Grid.Column="0" Background="LightGray">
-            <StackPanel Margin="100, 50">
-                <RadioButton Content="Player 1" FontSize="30" IsChecked="True"/>
-                <RadioButton Content="Computer 1" FontSize="30"/>
-                <CheckBox Content="Spielt Logisch" FontSize="30" IsChecked="True"/>
+            <StackPanel Margin="50, 50">
+                <RadioButton Content="Player 1" FontSize="25" IsChecked="True"/>
+                <RadioButton Content="Computer 1" FontSize="25"/>
+                <CheckBox Content="Spielt Logisch" FontSize="25" IsChecked="True"/>
             </StackPanel>
         </Grid>
 
         <!--Optionen P2-->
         <Grid Grid.Row="1" Grid.Column="2" Background="LightGray">
-            <StackPanel Margin="100, 50">
-                <RadioButton Content="Player 2" FontSize="30" IsChecked="True"/>
-                <RadioButton Content="Computer 2" FontSize="30"/>
-                <CheckBox Content="Spielt Logisch" FontSize="30" IsChecked="True"/>
+            <StackPanel Margin="50, 50">
+                <RadioButton Content="Player 2" FontSize="25" IsChecked="True"/>
+                <RadioButton Content="Computer 2" FontSize="25"/>
+                <CheckBox Content="Spielt Logisch" FontSize="25" IsChecked="True"/>
             </StackPanel>
         </Grid>
 
-
-
-        <!--Spielfeld-->
-        <Grid Grid.Row="1" Grid.Column="1" Width="600" Height="600" x:Name="GameGrid">
-
+        
+        <!--Spielfeld space-->
+        <Grid Grid.Row="1" Grid.Column="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="0.25*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="0.25*"/>
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
 
-            <Button x:Name="b1" Background="White" BorderThickness="2" BorderBrush="Black" Content="" FontSize="100" Grid.Column="0" Grid.Row="0" Click="b_Click"/>
-            <Button x:Name="b2" Background="White" BorderThickness="2" BorderBrush="Black" Content="" FontSize="100" Grid.Column="1" Grid.Row="0" Click="b_Click"/>
-            <Button x:Name="b3" Background="White" BorderThickness="2" BorderBrush="Black" Content="" FontSize="100" Grid.Column="2" Grid.Row="0" Click="b_Click"/>
-            <Button x:Name="b4" Background="White" BorderThickness="2" BorderBrush="Black" Content="" FontSize="100" Grid.Column="0" Grid.Row="1" Click="b_Click"/>
-            <Button x:Name="b5" Background="White" BorderThickness="2" BorderBrush="Black" Content="" FontSize="100" Grid.Column="1" Grid.Row="1" Click="b_Click"/>
-            <Button x:Name="b6" Background="White" BorderThickness="2" BorderBrush="Black" Content="" FontSize="100" Grid.Column="2" Grid.Row="1" Click="b_Click"/>
-            <Button x:Name="b7" Background="White" BorderThickness="2" BorderBrush="Black" Content="" FontSize="100" Grid.Column="0" Grid.Row="2" Click="b_Click"/>
-            <Button x:Name="b8" Background="White" BorderThickness="2" BorderBrush="Black" Content="" FontSize="100" Grid.Column="1" Grid.Row="2" Click="b_Click"/>
-            <Button x:Name="b9" Background="White" BorderThickness="2" BorderBrush="Black" Content="" FontSize="100" Grid.Column="2" Grid.Row="2" Click="b_Click"/>
+
+            <!--Spielfeld-->
+            <Grid Grid.Row="1" Grid.Column="1" x:Name="GameGrid" >
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+
+                <Button x:Name="b1" Background="White" BorderThickness="2" BorderBrush="Black" Content="" FontSize="100" Grid.Column="0" Grid.Row="0" Click="b_Click"/>
+                <Button x:Name="b2" Background="White" BorderThickness="2" BorderBrush="Black" Content="" FontSize="100" Grid.Column="1" Grid.Row="0" Click="b_Click"/>
+                <Button x:Name="b3" Background="White" BorderThickness="2" BorderBrush="Black" Content="" FontSize="100" Grid.Column="2" Grid.Row="0" Click="b_Click"/>
+                <Button x:Name="b4" Background="White" BorderThickness="2" BorderBrush="Black" Content="" FontSize="100" Grid.Column="0" Grid.Row="1" Click="b_Click"/>
+                <Button x:Name="b5" Background="White" BorderThickness="2" BorderBrush="Black" Content="" FontSize="100" Grid.Column="1" Grid.Row="1" Click="b_Click"/>
+                <Button x:Name="b6" Background="White" BorderThickness="2" BorderBrush="Black" Content="" FontSize="100" Grid.Column="2" Grid.Row="1" Click="b_Click"/>
+                <Button x:Name="b7" Background="White" BorderThickness="2" BorderBrush="Black" Content="" FontSize="100" Grid.Column="0" Grid.Row="2" Click="b_Click"/>
+                <Button x:Name="b8" Background="White" BorderThickness="2" BorderBrush="Black" Content="" FontSize="100" Grid.Column="1" Grid.Row="2" Click="b_Click"/>
+                <Button x:Name="b9" Background="White" BorderThickness="2" BorderBrush="Black" Content="" FontSize="100" Grid.Column="2" Grid.Row="2" Click="b_Click"/>
+
+            </Grid>
 
         </Grid>
+
 
         <Grid Grid.Row="2" Grid.Column="0" Background="LightGray">
             <Button x:Name="Start" Content="Start Game" FontSize="50" Background="Green" Click="Start_Click"/>
