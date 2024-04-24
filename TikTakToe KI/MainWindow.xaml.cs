@@ -109,9 +109,43 @@ namespace TikTakToe_KI
         }
 
         //überprüfung ob jemand gewonnen hat
-        private void CheckWin()
+        private int CheckWin()
         {
-            
+            // Zeilen checken
+            for(int i=0; i<3; i++)
+                if(board[i] == board[i+1] && board[i+1] == board[i+2] && board[i] != 0)
+                {
+                    return board[i];
+                }
+                else
+                {
+                    return 0;
+                }
+            //Spalten checken
+            for(int i=0; i<3; i++)
+            {
+                if (board[i] == board[i+3] && board[i+3] == board[i+6] && board[1] != 0)
+                {
+                    return board[i];
+                }
+            }
+            // Diagonale 1 checken
+            int d1 = 0;
+            if (board[d1] == board[d1 + 4] && board[d1 + 4] == board[d1 + 8] && board[d1] != 0)
+            {
+                return board[d1];
+            }
+
+            // Diagonale 2 checken
+            int d2 = 2;
+            if (board[d2] == board[d2 + 2] && board[d2 + 2] == board[d2 + 4] && board[d2] != 0)
+            {
+                return board[d2];
+            }
+            else
+            {
+                return 0;
+            }
         }
 
         private void AddScore(string Player)
