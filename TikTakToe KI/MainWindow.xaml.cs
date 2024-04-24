@@ -30,6 +30,7 @@ namespace TikTakToe_KI
         {
             InitializeComponent();
 
+            //Läde alle Buttons in eine Liste
             foreach (Button btn in GameGrid.Children)
             {
                 Buttons.Add(btn);
