@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -61,23 +62,37 @@ namespace TikTakToe_KI
             Button btn = (Button)sender;
             if (btn.Content == "")
             {
-                int index = (int)btn.Tag;
+                int index = Buttons.IndexOf(btn);
                 if (YourTurn)
                 {
-                    btn.Content = Player;
-                    board[index] = 1;
+                    PlaceMove(btn, 1, index);
                     CheckWin(1);
                     YourTurn = false;
                 }
                 else
                 {
-                    btn.Content = Computer;
-                    board[index] = 2;
+                    PlaceMove(btn, 2, index);
                     CheckWin(2);
                     YourTurn = true;
                 }
                 
             }
+        }
+
+        //Methode um ein Feld zu platzieren
+        private void PlaceMove(Button btn, int n, int index)
+        {
+            string p = "";
+            if (n == 1)
+            {
+                p = "X";
+            }
+            else
+            {
+                p = "O";
+            }
+            btn.Content = p;
+            board[index] = n;
         }
 
         //Button Reset Funktion 
@@ -177,7 +192,33 @@ namespace TikTakToe_KI
         //Strategisches entdecken eines Gewinns/verlustes
         private void DetectWin(int p)
         {
+            //Horizontale überprüfung 
+            for (int i = 0; i < 9; i+=3)
+            {
+                int player = 0;
+                int empty = 0;
+                int place = 10;
 
+                for (int l = i; l < l + 3; l++)
+                {
+                    if (board[l] == p)
+                    {
+                        player++;
+                    }
+                    else if (board[l] == 0)
+                    {
+                        empty++;
+                        place = l;
+                    }
+                }
+
+                if (place != 10 && player == 2 && empty == 1)
+                {
+                    Button btn = Buttons[place];
+                    PlaceMove(btn, p, place);
+
+                }
+            }
         }
 
     }
