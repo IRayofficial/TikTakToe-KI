@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace TikTakToe_KI
 {
@@ -122,6 +123,16 @@ namespace TikTakToe_KI
                 }
             }
 
+            for (int i = 0;i <3;i++) 
+            {
+                if (board[i] ==p && board[i+3] ==p && board[i+6] == p)
+                {
+                    AddScore(p);
+                    NewGame();
+                    return;
+                }
+            }
+
             //Vertikal
             for (int i = 0; i < 3; i++)
             {
@@ -144,9 +155,19 @@ namespace TikTakToe_KI
             
         }
 
-        private void AddScore(int Player)
+        private void AddScore(int p)
         {
-
+            if (p == 1)
+            {
+                ScoreX++;
+                XScore.Text = ScoreX.ToString();    
+                
+            }
+            else
+            {
+                ScoreO++;
+                OScore.Text = ScoreO.ToString();
+            }
         }
     }
 }
