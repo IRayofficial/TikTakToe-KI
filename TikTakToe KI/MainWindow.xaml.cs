@@ -109,6 +109,7 @@ namespace TikTakToe_KI
 
         }
 
+        //Gewinnüberprüfung
         private void CheckWin(int p)
         {
             //Horizontal
@@ -142,6 +143,8 @@ namespace TikTakToe_KI
                 return;
             }
 
+            //Unentschieden erkennen
+
         }
 
         private void AddScore(int p)
@@ -150,14 +153,31 @@ namespace TikTakToe_KI
             {
                 ScoreX++;
                 XScore.Text = ScoreX.ToString();    
-                Thread.Sleep(2000);
             }
             else
             {
                 ScoreO++;
                 OScore.Text = ScoreO.ToString();
-                Thread.Sleep(2000);
             }
+        }
+
+        //Allgemeiner Botaufruf
+        private void Bot()
+        {
+
+        }
+
+        //Random Funktion zum auswählen eines leeren Feldes
+        private void RandomPick()
+        {
+
+        }
+
+
+        //Strategisches entdecken eines Gewinns/verlustes
+        private void DetectWin(int p)
+        {
+
         }
 
     }
