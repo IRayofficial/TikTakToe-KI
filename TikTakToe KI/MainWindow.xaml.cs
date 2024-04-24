@@ -122,6 +122,16 @@ namespace TikTakToe_KI
                 }
             }
 
+            for (int i = 0;i <3;i++) 
+            {
+                if (board[i] ==p && board[i+3] ==p && board[i+6] == p)
+                {
+                    AddScore(p);
+                    NewGame();
+                    return;
+                }
+            }
+
             //Vertikal
         }
 
