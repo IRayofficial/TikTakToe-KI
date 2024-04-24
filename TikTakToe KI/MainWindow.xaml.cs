@@ -16,6 +16,7 @@ namespace TikTakToe_KI
     /// </summary>
     public partial class MainWindow : Window
     {
+        //Attribute
         public char Player = 'X';
         public char Computer = 'O';
         public bool YourTurn;
