@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -25,16 +26,19 @@ namespace TikTakToe_KI
         public int ScoreO = 0;
 
         public List<Button> Buttons = new List<Button>();
-        public int[] board;
+        public int[] board = new int[9];
         Random random = new Random();
         public MainWindow()
         {
             InitializeComponent();
 
+            int i = 0;
             //Läde alle Buttons in eine Liste
             foreach (Button btn in GameGrid.Children)
             {
+                btn.Tag = i;
                 Buttons.Add(btn);
+                i++;
             }
 
             XScore.Text = ScoreX.ToString();
@@ -56,15 +60,18 @@ namespace TikTakToe_KI
             Button btn = (Button)sender;
             if (btn.Content == "")
             {
+                int index = (int)btn.Tag;
                 if (YourTurn)
                 {
                     btn.Content = Player;
+                    board[index] = 1;
                     CheckWin();
                     YourTurn = false;
                 }
                 else
                 {
                     btn.Content = Computer;
+                    board[index] = 2;
                     CheckWin();
                     YourTurn = true;
                 }
