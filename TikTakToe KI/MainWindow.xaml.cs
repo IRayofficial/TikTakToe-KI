@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -31,10 +32,13 @@ namespace TikTakToe_KI
         {
             InitializeComponent();
 
+            int i = 0;
             //Läde alle Buttons in eine Liste
             foreach (Button btn in GameGrid.Children)
             {
+                btn.Tag = i;
                 Buttons.Add(btn);
+                i++;
             }
 
             XScore.Text = ScoreX.ToString();
@@ -59,13 +63,15 @@ namespace TikTakToe_KI
                 if (YourTurn)
                 {
                     btn.Content = Player;
-                    CheckWin(1);
+                    board[index] = 1;
+                    CheckWin();
                     YourTurn = false;
                 }
                 else
                 {
                     btn.Content = Computer;
-                    CheckWin(2);
+                    board[index] = 2;
+                    CheckWin();
                     YourTurn = true;
                 }
                 
