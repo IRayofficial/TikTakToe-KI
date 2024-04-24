@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace TikTakToe_KI
 {
@@ -65,14 +66,14 @@ namespace TikTakToe_KI
                 {
                     btn.Content = Player;
                     board[index] = 1;
-                    CheckWin();
+                    CheckWin(1);
                     YourTurn = false;
                 }
                 else
                 {
                     btn.Content = Computer;
                     board[index] = 2;
-                    CheckWin();
+                    CheckWin(2);
                     YourTurn = true;
                 }
                 
@@ -108,49 +109,55 @@ namespace TikTakToe_KI
 
         }
 
-        //überprüfung ob jemand gewonnen hat
-        private int CheckWin()
+        private void CheckWin(int p)
         {
-            // Zeilen checken
-            for(int i=0; i<3; i++)
-                if(board[i] == board[i+1] && board[i+1] == board[i+2] && board[i] != 0)
-                {
-                    return board[i];
-                }
-                else
-                {
-                    return 0;
-                }
-            //Spalten checken
-            for(int i=0; i<3; i++)
+            //Horizontal
+            for (int i = 0; i <9; i+=3)
             {
-                if (board[i] == board[i+3] && board[i+3] == board[i+6] && board[1] != 0)
+                if (board[i] == p && board[i+1] == p && board[i+2] == p)
                 {
-                    return board[i];
+                    AddScore(p);
+                    NewGame();
+                    return;
                 }
-            }
-            // Diagonale 1 checken
-            int d1 = 0;
-            if (board[d1] == board[d1 + 4] && board[d1 + 4] == board[d1 + 8] && board[d1] != 0)
-            {
-                return board[d1];
             }
 
-            // Diagonale 2 checken
-            int d2 = 2;
-            if (board[d2] == board[d2 + 2] && board[d2 + 2] == board[d2 + 4] && board[d2] != 0)
+            //Vertikal
+            for (int i = 0;i <3;i++) 
             {
-                return board[d2];
+                if (board[i] ==p && board[i+3] ==p && board[i+6] == p)
+                {
+                    AddScore(p);
+                    NewGame();
+                    return;
+                }
+            }
+
+            //Diagonal
+
+            if ((board[0] == p && board[4] == p && board[8] == p || board[2] == p && board[4] == p && board[6] == p))
+            {
+                AddScore(p);
+                NewGame();
+                return;
+            }
+
+        }
+
+        private void AddScore(int p)
+        {
+            if (p == 1)
+            {
+                ScoreX++;
+                XScore.Text = ScoreX.ToString();    
+                
             }
             else
             {
-                return 0;
+                ScoreO++;
+                OScore.Text = ScoreO.ToString();
             }
         }
 
-        private void AddScore(string Player)
-        {
-
-        }
     }
 }
