@@ -140,5 +140,6 @@ namespace TikTakToe_KI
                 OScore.Text = ScoreO.ToString();
             }
         }
+
     }
 }
