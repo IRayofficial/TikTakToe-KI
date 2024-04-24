@@ -158,7 +158,22 @@ namespace TikTakToe_KI
                 return;
             }
 
+
             //Unentschieden erkennen
+            int check = 0;
+            for (int i = 0;i < 9 ;i+=3) 
+            {
+                if (board[i] != 0 && board[i+1] != 0 && board[i+2] !=0)
+                {
+                    check++;
+                }
+            }
+
+            if(check == 3)
+            {
+                NewGame();
+                return;
+            }
 
         }
 
