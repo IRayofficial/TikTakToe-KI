@@ -151,12 +151,13 @@ namespace TikTakToe_KI
             {
                 ScoreX++;
                 XScore.Text = ScoreX.ToString();    
-                
+                Thread.Sleep(2000);
             }
             else
             {
                 ScoreO++;
                 OScore.Text = ScoreO.ToString();
+                Thread.Sleep(2000);
             }
         }
 
