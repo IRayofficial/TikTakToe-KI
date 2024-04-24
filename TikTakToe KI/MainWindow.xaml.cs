@@ -70,7 +70,7 @@ namespace TikTakToe_KI
             }
         }
 
-        //Reset des Games 
+        //Button Reset Funktion 
         private void Reset_Click(object sender, RoutedEventArgs e)
         {
             NewGame();
