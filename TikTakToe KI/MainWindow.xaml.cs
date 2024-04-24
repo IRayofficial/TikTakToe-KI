@@ -124,6 +124,25 @@ namespace TikTakToe_KI
             }
 
             //Vertikal
+            for (int i = 0;i <3;i++) 
+            {
+                if (board[i] ==p && board[i+3] ==p && board[i+6] == p)
+                {
+                    AddScore(p);
+                    NewGame();
+                    return;
+                }
+            }
+
+            //Diagonal
+
+            if ((board[0] == p && board[4] == p && board[8] == p || board[2] == p && board[4] == p && board[6] == p))
+            {
+                AddScore(p);
+                NewGame();
+                return;
+            }
+
         }
 
         private void AddScore(int p)
