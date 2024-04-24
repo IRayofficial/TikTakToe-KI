@@ -48,6 +48,7 @@ namespace TikTakToe_KI
 
             NewGame();
             YourTurn = WhoBeginns();
+
         }
 
         //Random auswahl wer beginnt
@@ -194,11 +195,11 @@ namespace TikTakToe_KI
         //Allgemeiner Botaufruf
         private void Bot()
         {
-
+            
         }
 
         //Random Funktion zum auswählen eines leeren Feldes
-        private void RandomPick()
+        private void RandomPick(int p)
         {
             bool flag = false;
             while (flag == false)
@@ -207,7 +208,9 @@ namespace TikTakToe_KI
                 if (board[y] == 0)
                 {
                     flag = true;
+                    Button btn = Buttons[y];
 
+                    PlaceMove(btn, p, y);
                 }
             }
 

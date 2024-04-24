@@ -85,7 +85,7 @@
         <Grid Grid.Row="1" Grid.Column="0" Background="LightGray">
             <StackPanel Margin="100, 50">
                 <RadioButton Content="Player 1" FontSize="30" IsChecked="True"/>
-                <RadioButton Content="Computer 1" FontSize="30"/>
+                <RadioButton Content="Computer 1" FontSize="30" x:Name="C1"/>
                 <CheckBox Content="Spielt Logisch" FontSize="30" IsChecked="True"/>
             </StackPanel>
         </Grid>
@@ -94,7 +94,7 @@
         <Grid Grid.Row="1" Grid.Column="2" Background="LightGray">
             <StackPanel Margin="100, 50">
                 <RadioButton Content="Player 2" FontSize="30" IsChecked="True"/>
-                <RadioButton Content="Computer 2" FontSize="30"/>
+                <RadioButton Content="Computer 2" FontSize="30" x:Name="C2"/>
                 <CheckBox Content="Spielt Logisch" FontSize="30" IsChecked="True"/>
             </StackPanel>
         </Grid>
