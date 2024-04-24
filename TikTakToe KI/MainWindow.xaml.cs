@@ -25,7 +25,7 @@ namespace TikTakToe_KI
         public int ScoreO = 0;
 
         public List<Button> Buttons = new List<Button>();
-        public int[] board;
+        public int[] board = new int[9];
         Random random = new Random();
         public MainWindow()
         {
@@ -59,13 +59,13 @@ namespace TikTakToe_KI
                 if (YourTurn)
                 {
                     btn.Content = Player;
-                    CheckWin();
+                    CheckWin(1);
                     YourTurn = false;
                 }
                 else
                 {
                     btn.Content = Computer;
-                    CheckWin();
+                    CheckWin(2);
                     YourTurn = true;
                 }
                 
@@ -102,12 +102,23 @@ namespace TikTakToe_KI
         }
 
         //überprüfung ob jemand gewonnen hat
-        private void CheckWin()
+        private void CheckWin(int p)
         {
-            
+            //Horizontal
+            for (int i = 0; i <9; i+=3)
+            {
+                if (board[i] == p && board[i+1] == p && board[i+2] == p)
+                {
+                    AddScore(p);
+                    NewGame();
+                    return;
+                }
+            }
+
+            //Vertikal
         }
 
-        private void AddScore(string Player)
+        private void AddScore(int Player)
         {
 
         }
