@@ -49,6 +49,10 @@ namespace TikTakToe_KI
             NewGame();
             YourTurn = WhoBeginns();
 
+            Thread botThread = new Thread(Bot);
+            botThread.IsBackground = true; // Setzen des Threads als Hintergrundthread
+            botThread.Start();
+
         }
 
         //Random auswahl wer beginnt
@@ -195,7 +199,51 @@ namespace TikTakToe_KI
         //Allgemeiner Botaufruf
         private void Bot()
         {
-            
+            while (true)
+            {
+                Thread.Sleep(100);
+                Dispatcher.Invoke(() =>
+                {
+                    if (C1.IsChecked == true && YourTurn)
+                    {
+                        if (DetectWin(1, 1))
+                        {
+                            YourTurn = !YourTurn;
+                        }
+                        else if (DetectWin(2, 1))
+                        {
+                            YourTurn = !YourTurn;
+                        }
+                        else
+                        {
+                            RandomPick(1);
+                            YourTurn = !YourTurn;
+                        }
+
+                        CheckWin(1);
+                    }
+
+                    if (C2.IsChecked == true && YourTurn == false)
+                    {
+                        if (DetectWin(2, 2))
+                        {
+                            YourTurn = !YourTurn;
+                        }
+                        else if (DetectWin(1, 2))
+                        {
+                            YourTurn = !YourTurn;
+                        }
+                        else
+                        {
+                            RandomPick(2);
+                            YourTurn = !YourTurn;
+                        }
+
+                        CheckWin(2);
+                    }
+                });
+                Thread.Sleep(100);
+            }
         }
 
         //Random Funktion zum auswählen eines leeren Feldes
@@ -218,16 +266,19 @@ namespace TikTakToe_KI
 
 
         //Strategisches entdecken eines Gewinns/verlustes
-        private void DetectWin(int p)
+        private bool DetectWin(int p, int n)
         {
+            int player = 0;
+            int empty = 0;
+            int place = 10;
             //Horizontale überprüfung 
             for (int i = 0; i < 9; i+=3)
             {
-                int player = 0;
-                int empty = 0;
-                int place = 10;
+                player = 0;
+                empty = 0;
+                place = 10;
 
-                for (int l = i; l < l + 3; l++)
+                for (int l = i; l < i + 3; l++)
                 {
                     if (board[l] == p)
                     {
@@ -238,15 +289,95 @@ namespace TikTakToe_KI
                         empty++;
                         place = l;
                     }
+
+                    if (place != 10 && player == 2 && empty == 1)
+                    {
+                        Button btn = Buttons[place];
+                        PlaceMove(btn, n, place);
+                        return true;
+                    }
+                }               
+            }
+
+            //Vertikale überprüfung
+            for (int i = 0; i < 3; i++)
+            {
+                player = 0;
+                empty = 0;
+                place = 10;
+
+                for (int l = i; l < 9; l += 3)
+                {
+                    if (board[l] == p)
+                    {
+                        player++;
+                    }
+                    else if (board[l] == 0)
+                    {
+                        empty++;
+                        place = l;
+                    }
+
+                    if (place != 10 && player == 2 && empty == 1)
+                    {
+                        Button btn = Buttons[place];
+                        PlaceMove(btn, n, place);
+                        return true;
+                    }
+                }
+            }
+
+            // Diagonale Überprüfung von links oben nach rechts unten
+            player = 0;
+            empty = 0;
+            place = 10;
+
+            for (int i = 0; i < 9; i += 4)
+            {
+                if (board[i] == p)
+                {
+                    player++;
+                }
+                else if (board[i] == 0)
+                {
+                    empty++;
+                    place = i;
                 }
 
                 if (place != 10 && player == 2 && empty == 1)
                 {
                     Button btn = Buttons[place];
-                    PlaceMove(btn, p, place);
-
+                    PlaceMove(btn, n, place);
+                    return true;
                 }
             }
+
+            // Diagonale Überprüfung von rechts oben nach links unten
+            player = 0;
+            empty = 0;
+            place = 10;
+
+            for (int i = 2; i < 7; i += 2)
+            {
+                if (board[i] == p)
+                {
+                    player++;
+                }
+                else if (board[i] == 0)
+                {
+                    empty++;
+                    place = i;
+                }
+
+                if (place != 10 && player == 2 && empty == 1)
+                {
+                    Button btn = Buttons[place];
+                    PlaceMove(btn, n, place);
+                    return true;
+                }
+            }
+
+            return false;   
         }
 
     }
