@@ -110,8 +110,8 @@
             <StackPanel Margin="50, 50">
                 <Border BorderBrush="Black" BorderThickness="2">
                     <StackPanel>
-                        <RadioButton Content="Player 1" FontSize="25" IsChecked="True"/>
-                        <RadioButton Content="Computer 1" FontSize="25" x:Name="C2"/>
+                        <RadioButton Content="Player 2" FontSize="25" IsChecked="True"/>
+                        <RadioButton Content="Computer 2" FontSize="25" x:Name="C2"/>
                     </StackPanel>
                 </Border>
                 <Border BorderBrush="Black" BorderThickness="2">

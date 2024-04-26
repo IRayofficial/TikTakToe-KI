@@ -29,7 +29,11 @@ namespace TikTakToe_KI
         //bool zum sagen wer am zug ist
         public bool YourTurn;
 
+        //aktiviere /deaktiviere Fastmode
         public bool fastmode = false;
+
+        //Boolean zur überprüfung und zum warten bis überprüfung abgeschlossen ist
+        public bool InCheck = false;
 
         //Score Attribute
         public int ScoreX = 0;
@@ -80,7 +84,7 @@ namespace TikTakToe_KI
 
         //Random auswahl wer beginnt
         public bool WhoBeginns()
-        { 
+        {
             return (random.Next(0, 3) < 2);
         }
 
@@ -95,15 +99,13 @@ namespace TikTakToe_KI
                 {
                     YourTurn = false;
                     PlaceMove(btn, 1, index);
-                    CheckWin(1);
-                    
+
                 }
                 else
                 {
                     YourTurn = true;
                     PlaceMove(btn, 2, index);
-                    CheckWin(2);
-                    
+
                 }
             }
         }
@@ -111,22 +113,28 @@ namespace TikTakToe_KI
         //Methode um ein Feld zu platzieren
         private void PlaceMove(Button btn, int n, int index)
         {
-            string p = "";
-            if (n == 1)
+            if (!InCheck)
             {
-                p = "X";
-            }
-            else
-            {
-                p = "O";
-            }
-            //Frontend Visualisieren
-            btn.Content = p;
-            //ins Backend Speichern
-            board[index] = n;
+                InCheck = true;
+                string p = "";
+                if (n == 1)
+                {
+                    p = "X";
+                }
+                else
+                {
+                    p = "O";
+                }
+                //Frontend Visualisieren
+                btn.Content = p;
+                //ins Backend Speichern
+                board[index] = n;
 
-            //Objecte und Felderreihenfolge Speichern
-            FieldEmpty = false;
+                //Objecte und Felderreihenfolge Speichern
+                FieldEmpty = false;
+
+                CheckWin(n, index);
+            }
         }
 
         //Button Reset Funktion 
@@ -177,59 +185,151 @@ namespace TikTakToe_KI
         }
 
         //Gewinnüberprüfung
-        private void CheckWin(int p)
+        public async void CheckWin(int p, int index)
         {
+            bool won = false;
+            bool draw = false;
             //Horizontal
-            for (int i = 0; i <9; i+=3)
+            for (int i = 0; i < 9; i += 3)
             {
-                if (board[i] == p && board[i+1] == p && board[i+2] == p)
+                if (board[i] == p && board[i + 1] == p && board[i + 2] == p)
                 {
-                    LearnMove(p);
-                    AddScore(p);
-                    NewGame();
+                    won = true;
+                    await CheckLastTest(i, i+1, i+2, index, p, draw, won);
+                    InCheck = false;
                     return;
                 }
             }
 
             //Vertikal
-            for (int i = 0;i <3;i++) 
+            for (int i = 0; i < 3; i++)
             {
-                if (board[i] ==p && board[i+3] ==p && board[i+6] == p)
+                if (board[i] == p && board[i + 3] == p && board[i + 6] == p)
                 {
-                    LearnMove(p);
-                    AddScore(p);
-                    NewGame();
+
+                    won = true;
+                    await CheckLastTest(i, i + 3, i + 6, index, p, draw, won);
+                    InCheck = false;
                     return;
                 }
             }
 
             //Diagonal
 
-            if ((board[0] == p && board[4] == p && board[8] == p || board[2] == p && board[4] == p && board[6] == p))
+            if (board[0] == p && board[4] == p && board[8] == p )
             {
-                LearnMove(p);
-                AddScore(p);
-                NewGame();
+
+                won = true;
+                await CheckLastTest(0, 4, 8, index, p, draw, won);
+                InCheck = false;
+                return;
+            }
+
+            if (board[2] == p && board[4] == p && board[6] == p)
+            {
+
+                won = true;
+                await CheckLastTest(2, 4, 6, index, p, draw, won);
+                InCheck = false;
                 return;
             }
 
 
             //Unentschieden erkennen
             int check = 0;
-            for (int i = 0;i < 9 ;i+=3) 
+            for (int i = 0; i < 9; i += 3)
             {
-                if (board[i] != 0 && board[i+1] != 0 && board[i+2] !=0)
+                if (board[i] != 0 && board[i + 1] != 0 && board[i + 2] != 0)
                 {
                     check++;
                 }
             }
 
-            if(check == 3)
+            if (check == 3)
             {
-                NewGame();
+                draw = true;
+                await CheckLastTest(0, 0, 0, index, p, draw, won);
+                InCheck = false;
                 return;
             }
 
+            InCheck = false;
+
+        }
+
+        public async Task CheckLastTest (int i1 , int i2, int i3, int winMove, int player, bool draw, bool win)
+        {
+            if (win)
+            {
+                LearnMove(player);
+                AddScore(player);
+                if (!fastmode)
+                {
+                    PlaceWinner(player, winMove);
+                    await Task.Delay(100);
+                    await WinAnimation(i1,i2,i3,player);
+                }
+                NewGame();
+            }
+            else if(draw)
+            {
+                if (!fastmode)
+                {
+                    PlaceWinner(player, winMove);
+                    await Task.Delay(100);
+                }
+                NewGame();
+                
+            }
+        }
+
+        //Methode um Button zu platzieren
+        public void PlaceWinner(int player, int index)
+        {
+            Button btn = Buttons[index];
+            string p = "";
+            if (player == 1)
+            {
+                p = "X";
+            }
+            else
+            {
+                p = "O";
+            }
+            //Frontend Visualisieren
+            btn.Content = p;
+        }
+
+        //Animation für das Userfeedback
+        public async Task WinAnimation(int i1, int i2, int i3, int player)
+        {
+            string symbol = "";
+            if (player == 1)
+            {
+                symbol = "X";
+            }
+            else
+            {
+                symbol = "O";
+            }
+
+            Button btn1 = Buttons[i1];
+            Button btn2 = Buttons[i2];
+            Button btn3 = Buttons[i3];
+            for (int i = 0; i< 5; i++)
+            {
+                btn1.Content = "";
+                btn2.Content = "";
+                btn3.Content = "";
+
+                await Task.Delay(100);
+
+                btn1.Content= symbol;
+                btn2.Content= symbol;
+                btn3.Content= symbol;
+
+                await Task.Delay(100);
+            }
         }
 
         private void AddScore(int p)
@@ -250,7 +350,7 @@ namespace TikTakToe_KI
             }
         }
 
-        //Allgemeiner Botaufruf ??Platziert manchmal 2 Formen gleichzeitig
+        //Allgemeiner Botaufruf
         private void Bot()
         {
             while (true)
@@ -259,7 +359,7 @@ namespace TikTakToe_KI
                 Dispatcher.Invoke(() =>
                 {
                     //X Bot
-                    if (C1.IsChecked == true && YourTurn)
+                    if (C1.IsChecked == true && YourTurn && !InCheck)
                     {
                         //Spiele mit KI
                         if (C1KI.IsChecked ==true)
@@ -267,7 +367,6 @@ namespace TikTakToe_KI
                             if (KI(1))
                             {
                                 YourTurn = false;
-                                CheckWin(1);
                                 return;
                             }
                         }
@@ -278,23 +377,20 @@ namespace TikTakToe_KI
                             if (DetectWin(1, 1))
                             {
                                 YourTurn = false;
-                                CheckWin(1);
                                 return;
                             }
                             else if (DetectWin(2, 1))
                             {
                                 YourTurn = false;
-                                CheckWin(1);
                                 return;
                             }
                         }
 
                         RandomPick(1);
-                        CheckWin(1);
                         YourTurn = false;
 
                     }
-                    else if (C2.IsChecked == true && YourTurn == false) //O Bot
+                    else if (C2.IsChecked == true && YourTurn == false && !InCheck) //O Bot
                     {
                         //Spiele mit KI
                         if (C2KI.IsChecked == true)
@@ -302,7 +398,6 @@ namespace TikTakToe_KI
                             if (KI(2))
                             {
                                 YourTurn = true;
-                                CheckWin(2);
                                 return;
                             }
                         }
@@ -313,19 +408,16 @@ namespace TikTakToe_KI
                             if (DetectWin(2, 2))
                             {
                                 YourTurn = true;
-                                CheckWin(2);
                                 return;
                             }
                             else if (DetectWin(1, 2))
                             {
                                 YourTurn = true;
-                                CheckWin(2);
                                 return;
                             }
                         }
 
                         RandomPick(2);
-                        CheckWin(2);
                         YourTurn = true;
                     }
                 });
