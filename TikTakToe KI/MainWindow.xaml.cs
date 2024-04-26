@@ -132,6 +132,11 @@ namespace TikTakToe_KI
         //Button Reset Funktion 
         private void Reset_Click(object sender, RoutedEventArgs e)
         {
+
+            ScoreX = 0;
+            ScoreO = 0;
+            XScore.Text = ScoreX.ToString();
+            OScore.Text = ScoreO.ToString();
             NewGame();
         }
 
