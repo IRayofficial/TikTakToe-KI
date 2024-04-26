@@ -85,18 +85,46 @@
         <!--Optionen P1-->
         <Grid Grid.Row="1" Grid.Column="0" Background="LightGray">
             <StackPanel Margin="50, 50">
-                <RadioButton Content="Player 1" FontSize="25" IsChecked="True"/>
-                <RadioButton Content="Computer 1" FontSize="25" x:Name="C1"/>
-                <CheckBox Content="Spielt Logisch" FontSize="25" IsChecked="True"/>
+                <Border BorderBrush="Black" BorderThickness="2">
+                    <StackPanel>
+                        <RadioButton Content="Player 1" FontSize="25" IsChecked="True"/>
+                        <RadioButton Content="Computer 1" FontSize="25" x:Name="C1"/>
+                    </StackPanel>
+                </Border>
+                
+                <Border BorderBrush="Black" BorderThickness="2">
+                    <StackPanel>
+                        <TextBlock Text="KI Optionen" FontSize="25" TextAlignment="Center" Background="DarkGray"/>
+                        <RadioButton Content="Spielt mit KI" FontSize="25" x:Name="C1KI" IsChecked="True"/>
+                        <RadioButton Content="Spielt Logisch" FontSize="25" x:Name="C1Logic"/>
+                        <RadioButton Content="Spielt Random" FontSize="25" x:Name="C1Rand"/>
+                        <CheckBox Content="Lernt dazu" FontSize="25" x:Name="C1Learn" IsChecked="True"/>
+                        <TextBlock Background="LightGray" x:Name="C1Count" Text="0" TextAlignment="Center" FontSize="25"/>
+                    </StackPanel>
+                </Border>
             </StackPanel>
         </Grid>
 
         <!--Optionen P2-->
         <Grid Grid.Row="1" Grid.Column="2" Background="LightGray">
             <StackPanel Margin="50, 50">
-                <RadioButton Content="Player 2" FontSize="25" IsChecked="True"/>
-                <RadioButton Content="Computer 2" FontSize="25" x:Name="C2"/>
-                <CheckBox Content="Spielt Logisch" FontSize="25" IsChecked="True"/>
+                <Border BorderBrush="Black" BorderThickness="2">
+                    <StackPanel>
+                        <RadioButton Content="Player 1" FontSize="25" IsChecked="True"/>
+                        <RadioButton Content="Computer 1" FontSize="25" x:Name="C2"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="Black" BorderThickness="2">
+                    <StackPanel>
+                        <TextBlock Text="KI Optionen" FontSize="25" TextAlignment="Center" Background="DarkGray"/>
+                        <RadioButton Content="Spielt mit KI" FontSize="25" x:Name="C2KI" IsChecked="True"/>
+                        <RadioButton Content="Spielt Logisch" FontSize="25" x:Name="C2Logic"/>
+                        <RadioButton Content="Spielt Random" FontSize="25" x:Name="C2Rand"/>
+                        <CheckBox Content="Lernt dazu" FontSize="25" x:Name="C2Learn" IsChecked="True"/>
+                        <TextBlock Background="LightGray" x:Name="C2Count" Text="0" TextAlignment="Center" FontSize="25"/>
+                    </StackPanel>
+                </Border>
+                
             </StackPanel>
         </Grid>
 
@@ -145,7 +173,7 @@
 
 
         <Grid Grid.Row="2" Grid.Column="0" Background="LightGray">
-            <Button x:Name="Start" Content="Start Game" FontSize="50" Background="Green" Click="Start_Click"/>
+            <Button x:Name="Start" Content="SlowMode" FontSize="50" Background="Green" Click="Start_Click"/>
         </Grid>
 
         <Grid Grid.Row="2" Grid.Column="1" Background="LightGray">
@@ -153,7 +181,7 @@
         </Grid>
 
         <Grid Grid.Row="2" Grid.Column="2" Background="LightGray">
-            <Button x:Name="Stop" Content="Stop Game" FontSize="50" Background="DarkGray" Click="Stop_Click"/>
+            <Button x:Name="Stop" Content="FastMode" FontSize="50" Background="DarkGray" Click="Stop_Click"/>
         </Grid>
     </Grid>
 </Window>
