@@ -12,6 +12,8 @@ namespace TikTakToe_KI.assets
         //Gewinnmuster wird hier eingeseichert
         public int[] Strategy = new int[9];
 
+        //Idee noch ein Score für den Ersten Button zu erstellen
+
         public int WinningPlayer;
 
         //Wird benötigt wenn keine Felder platziert worden sind um die Strategie auszuwählen welche am besten funktioniert

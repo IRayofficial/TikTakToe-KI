@@ -8,11 +8,13 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TikTakToe_KI.assets;
 using static System.Formats.Asn1.AsnWriter;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TikTakToe_KI
 {
@@ -303,15 +305,7 @@ namespace TikTakToe_KI
         //Animation für das Userfeedback
         public async Task WinAnimation(int i1, int i2, int i3, int player)
         {
-            string symbol = "";
-            if (player == 1)
-            {
-                symbol = "X";
-            }
-            else
-            {
-                symbol = "O";
-            }
+            string symbol = (player == 1) ? "X":"O";
 
             Button btn1 = Buttons[i1];
             Button btn2 = Buttons[i2];
@@ -332,6 +326,7 @@ namespace TikTakToe_KI
             }
         }
 
+        //Score und Anzahl der Gelernten Zügen speichern
         private void AddScore(int p)
         {
             if (p == 1)
@@ -563,88 +558,6 @@ namespace TikTakToe_KI
             return inverted;
         }
 
-        //KI Spielmodell
-        public bool KI(int player)
-        {
-            List<Learning> MyBrain;
-
-            //Auswahl des Memorys aufgrund des Computers ob 1 oder 2 also ob X oder O
-            if (player == 1)
-            {
-                MyBrain = XMemory;
-            }
-            else
-            {
-                MyBrain= OMemory;
-            }
-
-            //Falls das Feld leer ist
-            if (FieldEmpty)
-            {
-                return false;
-            }
-            else if (MyBrain.Count >0) //Falls schon Felder Platziert worden sind muss das Aktuelle Feld mit bisherige Stradegien verglichen werden
-            {
-                //platzierte felder errechnen
-                int placedFields = 0;
-                foreach (int i in board)
-                {
-                    if (i != 0)
-                    {
-                        placedFields++;
-                    }
-                }
-
-                //Suche die beste Stradegy raus
-                int rate = -1;
-                int index = -1;
-                int check = 0;
-                foreach (Learning le in MyBrain)
-                {
-                    for (int i =0; i < le.Strategy.Length; i++)
-                    {
-                        if (board[i] != 0 && board[i] == le.Strategy[i])
-                        {
-                            check++;
-                        }
-                    }
-
-                    if (check == placedFields && le.TimesWon > rate)
-                    {
-                        //Abspeichern der Gewinnrate
-                        rate = le.TimesWon;
-                        index = MyBrain.IndexOf(le);
-                    }
-                }
-
-                //Falls eine Stradegy gewählt wurde
-                if(index >= 0)
-                {
-                    //Laden des gewinn Grids
-                    int[] virtualGrid = new int[9];
-                    Array.Copy(MyBrain[index].Strategy, virtualGrid, virtualGrid.Length);
-
-                    //Liste zum zwischenspeichern der noch verfügbaren Positionen
-                    List<int> positions = new List<int>();
-
-                    //Logik zum auswerten welcher der Werte welche Positionen der Form noch frei sind
-                    for (int i =0; i < board.Length; i++)
-                    {
-                        //Falls das Board noch leer ist aber im Muster der Spieler platziert ist
-                        if (board[i] == 0 && virtualGrid[i] == player)
-                        {
-                            positions.Add(i);
-                        }
-                    }
-
-                    //Hier Algorithmus zur auswertung des nächsten Spielzuges--------------------------------
-                }
-            }
-
-            return false;
-        }
-
-
         //Strategisches entdecken eines Gewinns/verlustes
         private bool DetectWin(int p, int n)
         {
@@ -759,6 +672,403 @@ namespace TikTakToe_KI
 
             return false;   
         }
+
+
+        //KI Funktionen-------------------------------------------------------------------------------------------------
+
+        //KI Spielmodell
+        public bool KI(int player)
+        {
+            //Auswahl des Memorys aufgrund des Computers ob 1 oder 2 also ob X oder O
+            List<Learning> Memory = (player == 1) ? XMemory : OMemory;
+
+            //Liste aller möglichen Wege von Stradegien
+            List<int> Positions = new List<int>();
+            //Liste aller Scores
+            List<int> finalScores = new List<int>();
+
+            //Falls es gelernte Stradegien gibt und das Feld leer ist
+            if (FieldEmpty && Memory.Count > 0)
+            {
+                //Zufälligen Zug eines der Besten Stradegien auswählen
+                int move = ChooseFirst(Memory, player);
+
+                //Falls move grösser als 0 ist
+                if (move >= 0)
+                {
+                    PlaceMove(Buttons[move], player, move);
+                    return true;
+                }
+
+            }//Falls es gelernte Stradegien gibt aber das Feld nicht leer ist
+            else if (Memory.Count > 0)
+            {
+                int indexOfStradegy = BestStradegy(Memory, board);
+
+                if (indexOfStradegy >= 0)
+                {
+                    Positions = FreeButtons(Memory, indexOfStradegy, player, board);
+                    finalScores = CheckStradegysFirst(Memory, player, board); 
+                }
+                
+            }
+
+            //Falls Stradegien gefunden wurden 
+            if (Positions.Count > 0 && finalScores.Count >0 )
+            {
+                //Besten Score auswerten
+                int bestScore = -200;
+                int bestMove = -1;
+
+                for(int i = 0; i<finalScores.Count; i++)
+                {
+                    if (finalScores[i] > bestScore)
+                    {
+                        bestScore = finalScores[i];
+                        bestMove = Positions[i];
+                    }
+                }
+
+                if (bestMove >=0)
+                {
+                    PlaceMove(Buttons[bestMove], player, bestMove);
+                    return true;
+                }
+                else { return false; }
+
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        //Methode um durch alle Moves zu kommen und zu testen
+        public List<int> CheckStradegysFirst(List<Learning>memory, int player, int[]Vboard)
+        {
+            //Liste der Scores und der Felder erstellen
+            List<int> Scores = new List<int>();
+
+            //Speicher des gegnerwertes
+            int oponent = (player == 1) ? 2 : 1;
+
+            //Beste Stradegie nach Score bewertet für das aktuelle Layout
+            int strategyIndex = BestStradegy(memory, Vboard);
+
+            if (strategyIndex >= 0)
+            {
+                //Leere Felder erkennen die die Stradegy belegen kann
+                List<int> fieldIndex = FreeButtons(memory, strategyIndex, player, Vboard);
+
+                foreach (int i in fieldIndex)
+                {
+                    //Kopie des aktuellen Feldes erstellen
+                    int[] testboard = CopyBoard(Vboard);
+
+                    //Platziere den Move auf deinen Board
+                    testboard[i] = player;
+
+                    //Prüfe ob dein Move ein gewinner war
+                    int yourMoveScore = TestWin(testboard, player);
+
+                    if (yourMoveScore > 0)
+                    {
+                        //Gewinnerzug direkt in Score Speichern
+                        Scores.Add(1000);
+                    }
+                    else
+                    {
+                        //Liste aller leeren Felder bekommen
+                        List<int> empty = GetEmptyFields(testboard);
+
+                        if (empty.Count > 0)
+                        {
+                            int enemyScore = 0;
+                            //jedes scenario was der Gegner machen könnte testen
+                            foreach (int enemyMoves in empty)
+                            {
+                                int[] enemyBoard = CopyBoard(testboard);
+                                //Gegner platzieren
+                                enemyBoard[enemyMoves] = oponent;
+
+                                int enemyMove = TestWin(enemyBoard, oponent);
+
+                                if (enemyMove > 0)
+                                {
+                                    //Gewinnerzug direkt in Score Speichern
+                                    enemyScore =- 1000;
+                                }
+                                else
+                                {
+                                    enemyScore = CheckStradegys(memory, player, enemyBoard);
+                                }
+                            }
+
+                            Scores.Add(enemyScore);
+                        }
+
+                    }
+                }
+            }
+
+            return Scores;
+        }
+
+        //Alle weitern Duchläufe müssen die Scores zusammengezählt werden und nach oben weiter gegeben werden
+        public int CheckStradegys(List<Learning> memory, int player, int[] Vboard)
+        {
+            //Liste der Scores und der Felder erstellen
+            List<int> Scores = new List<int>();
+
+            //Speicher des gegnerwertes
+            int oponent = (player == 1) ? 2 : 1;
+
+            //Beste Stradegie nach Score bewertet für das aktuelle Layout
+            int strategyIndex = BestStradegy(memory, Vboard);
+
+            if (strategyIndex >= 0)
+            {
+                //Leere Felder erkennen die die Stradegy belegen kann
+                List<int> fieldIndex = FreeButtons(memory, strategyIndex, player, Vboard);
+
+                foreach (int i in fieldIndex)
+                {
+                    //Kopie des aktuellen Feldes erstellen
+                    int[] testboard = CopyBoard(Vboard);
+
+                    //Platziere den Move auf deinen Board
+                    testboard[i] = player;
+
+                    //Prüfe ob dein Move ein gewinner war
+                    int yourMoveScore = TestWin(testboard, player);
+
+                    if (yourMoveScore > 0)
+                    {
+                        //Gewinnerzug direkt in Score Speichern
+                        Scores.Add(yourMoveScore);
+                    }
+                    else
+                    {
+                        //Liste aller leeren Felder bekommen
+                        List<int> empty = GetEmptyFields(testboard);
+
+                        if (empty.Count > 0)
+                        {
+                            int enemyScore = 0;
+                            //jedes scenario was der Gegner machen könnte testen
+                            foreach (int enemyMoves in empty)
+                            {
+                                int[] enemyBoard = CopyBoard(testboard);
+                                //Gegner platzieren
+                                enemyBoard[enemyMoves] = oponent;
+
+                                int enemyMove = TestWin(enemyBoard, oponent);
+
+                                if (enemyMove > 0)
+                                {
+                                    //Wenn gegner gewinnt
+                                    enemyScore -= enemyMove;
+                                }
+                                else
+                                {
+                                    enemyScore = CheckStradegys(memory, player, enemyBoard);
+                                }
+                            }
+
+                            Scores.Add(enemyScore);
+                        }
+
+                    }
+                }
+            }
+
+            //Alle scores zusammenzählen und als Score zurückgeben
+            int finalScore = 0;
+
+            if (Scores.Count >0)
+            {
+                foreach (int i in Scores)
+                {
+                    finalScore += i;
+                }
+            }
+
+            return finalScore;  
+        }
+
+        //Methode um das Board mit der Stradegie abgleicht und die Freien stellen der Vorlage zurückgibt
+        public List<int> FreeButtons(List<Learning> memory, int index, int player, int[] board)
+        {
+            List<int> freebuttons = new List<int>();
+
+            for (int i = 0; i < board.Length; i++)
+            {
+                if (memory[index].Strategy[i] == player && board[i] == 0)
+                {
+                    freebuttons.Add(i);
+                }
+            }
+
+            return freebuttons;
+        }
+
+        //Funktion für KI um im ersten Zug einen Button auszuwählen
+        public int ChooseFirst(List<Learning> Memory, int player)
+        {
+            //Bekomme die Beste Stradegie als Index
+            int stratIndex = BestScore(Memory);
+
+            //Liste der durchführbaren Moves
+            List<int> moves = new List<int>();
+
+            //überprüfung aller vom Spieler gesetzten Werde der Vorlage
+            int index = 0;
+            foreach (int i in Memory[stratIndex].Strategy)
+            {
+                if (i == player)
+                {
+                    moves.Add(index);
+                }
+                index++;
+            }
+
+            //Falls es Gültige Züge gibt
+            if (moves.Count >0)
+            {
+                //Wählt zufällig ein Move aus
+                int move = random.Next(moves.Count);
+                return move;
+            }
+            else { return -1; }
+        }
+
+        //Funktion für KI um in testfällen alle leere Felder zu laden
+        public List<int> GetEmptyFields(int[] test)
+        {
+            List<int> empty = new List<int>();
+
+            int index = 0;
+            foreach (int i in test)
+            {
+                if (i == 0)
+                {
+                    empty.Add(index);
+                }
+                index++;
+            }
+
+            return empty;
+        }
+
+        //Funktion für KI um im testscenario auf gewinn zu prüfen
+        public int TestWin(int[] testField, int player)
+        {
+            //Score dieses Durchlaufes
+            int score = 0;
+
+            //Horizontal
+            for (int i = 0; i < 9; i += 3)
+            {
+                if (testField[i] == player && testField[i + 1] == player && testField[i + 2] == player)
+                {
+                    score = +1;
+                }
+            }
+            //Vertikal
+            for (int i = 0; i < 3; i++)
+            {
+                if (testField[i] == player && testField[i + 3] == player && testField[i + 6] == player)
+                {
+                    score = +1;
+                }
+            }
+            //Diagonal
+            if (testField[0] == player && testField[4] == player && testField[8] == player ||
+                testField[2] == player && testField[4] == player && testField[6] == player)
+            {
+                score = +1;
+            }
+            return score;
+        }
+
+        //Ki Funktion um Board copieren für Simulationen 
+        public int[] CopyBoard(int[] origin)
+        {
+            int[] copy = new int[9];
+            Array.Copy(origin, copy, origin.Length);
+            return copy;
+        }
+
+        //Methode die beste Stradegy zu finden nach puren score
+        public int BestScore(List<Learning> learnings)
+        {
+            //Stradegie Index der ausgewählten Stradegie
+            int stradegyIndex = -1;
+
+            //Prüfung des höchsten Scores
+            int rate = -1;
+
+            //Prüft alle Stradegien nach score
+            foreach (Learning learned in learnings)
+            {
+                //Wenn Stradegie besser ist als vorherige
+                if (learned.TimesWon > rate)
+                {
+                    //Abspeichern der Gewinnrate
+                    rate = learned.TimesWon;
+                    //Abspeichern des Indexes der Stradegie
+                    stradegyIndex = learnings.IndexOf(learned);
+                }
+            }
+            return stradegyIndex;
+        }
+
+        //Methode um die beste Stradegie zu finden (aufgrund der übereinstimmung)
+        public int BestStradegy(List<Learning> learnings, int[] testBoard)
+        {
+            //Stradegie Index der ausgewählten Stradegie
+            int stradegyIndex = -1;
+
+            //platzierte felder errechnen
+            int placedFields = 0;
+            foreach (int i in testBoard)
+            {
+                if (i != 0)
+                {
+                    placedFields++;
+                }
+            }
+
+            //Prüfung des höchsten Scores
+            int rate = -1;
+
+            //Prüft alle Stradegien ob diese mit dem auf dem Board Stimmen
+            foreach (Learning learned in learnings)
+            {
+                //prüfung ob die Platzierten Felder mit den übereinstimmenden Felder übereinstimmen
+                int check = 0;
+
+                //Speichert die Anzahl der gesetzten Muster im Feld
+                for (int i = 0; i < learned.Strategy.Length; i++)
+                {
+                    if (testBoard[i] != 0 && testBoard[i] == learned.Strategy[i])
+                    {
+                        check++;
+                    }
+                }
+
+                //Wenn Stradegie besser ist als vorherige
+                if (check == placedFields && learned.TimesWon > rate)
+                {
+                    //Abspeichern der Gewinnrate
+                    rate = learned.TimesWon;
+                    //Abspeichern des Indexes der Stradegie
+                    stradegyIndex = learnings.IndexOf(learned);
+                }
+            }
+            return stradegyIndex;
+        }
+
 
     }
 }
